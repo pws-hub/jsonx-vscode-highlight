@@ -1,0 +1,245 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"scopeName": "source.jsonx",
+	"fileTypes": ["jsonx"],
+	"name": "JSONX",
+	"patterns": [
+		{ "include": "#comments" },
+		{ "include": "#value" }
+	],
+	"repository": {
+		"variable": {
+			"match": "\\$[a-zA-Z0-9_-]+",
+			"name": "constant.language.jsonx"
+		},
+		"assigned": {
+			"name": "variable.parameter.jsonx",
+			"patterns": [
+				{
+					"match": "(...)?\\$[a-zA-Z0-9._-]+",
+					"name": "variable.parameter.jsonx"
+				},
+				{
+					"match": "$[a-zA-Z0-9.]+({|\\[)[a-zA-Z0-9._, ]+(\\]|})+",
+					"name": "variable.parameter.jsonx"
+				}
+			]
+		},
+		"source": {
+			"match": "((https?://)|((./)?(../)*)){1}[a-zA-Z0-9.\\-\\?=&:_]+/?",
+			"name": "markup.underline.link.jsonx"
+		},
+		"script": {
+			"match": "`(.+)`",
+			"name": "markup.underline.link.jsonx"
+		},
+		"as": {
+			"match": " *as *",
+			"name": "keyword.control.jsonx"
+		},
+		"import": {
+			"name": "import.language.jsonx",
+			"patterns": [
+				{
+					"match": "@import",
+					"name": "keyword.control.jsonx"
+				},
+				{
+					"match": " *from *",
+					"name": "keyword.control.jsonx"
+				},
+				{
+					"match": " {[a-zA-Z0-9., ]+} ",
+					"name": "constant.language.jsonx"
+				},
+				{ "include": "#as" },
+				{ "include": "#source" }
+			]
+		},
+		"export": {
+			"name": "export.language.jsonx",
+			"patterns": [
+				{
+					"match": "@export",
+					"name": "keyword.control.jsonx"
+				},
+				{ "include": "#as" }
+			]
+		},
+
+
+		"array": {
+			"begin": "\\[",
+			"beginCaptures": {
+				"0": { "name": "punctuation.definition.array.begin.jsonx" }
+			},
+			"end": "\\]",
+			"endCaptures": {
+				"0": { "name": "punctuation.definition.array.end.jsonx" }
+			},
+			"name": "meta.structure.array.jsonx",
+			"patterns": [
+				{ "include": "#comments" },
+				{ "include": "#value" },
+				{
+					"match": ",",
+					"name": "punctuation.separator.array.jsonx"
+				},
+				{
+					"match": "[^\\s\\]]",
+					"name": "invalid.illegal.expected-array-separator.jsonx"
+				}
+			]
+		},
+		"constant": {
+			"match": "\\b(?: ?true|false|null|Infinity|NaN)\\b",
+			"name": "constant.language.jsonx"
+		},
+		"infinity": {
+			"match": "(-)*\\b(?:Infinity|NaN)\\b",
+			"name": "constant.language.jsonx"
+		},
+		"number": {
+			"comment": "handles integer and decimal numbers",
+			"match": "[+-.]?(?=[1-9]|0(?!\\d))\\d+(\\.\\d+)?([eE][+-]?\\d+)?",
+			"name": "constant.numeric.jsonx"
+		},
+		"object": {
+			"begin": "\\{",
+			"beginCaptures": {
+				"0": { "name": "punctuation.definition.dictionary.begin.jsonx" }
+			},
+			"comment": "a jsonx object",
+			"end": "\\}",
+			"endCaptures": {
+				"0": { "name": "punctuation.definition.dictionary.end.jsonx" }
+			},
+			"name": "meta.structure.dictionary.jsonx",
+			"patterns": [
+				{ "include": "#comments" },
+				{
+					"comment": "the jsonx object key",
+					"include": "#key"
+				},
+				{
+					"begin": ":",
+					"beginCaptures": {
+						"0": { "name": "punctuation.separator.dictionary.key-value.jsonx" }
+					},
+					"end": "(,)|(?=\\})",
+					"endCaptures": {
+						"1": { "name": "punctuation.separator.dictionary.pair.jsonx" }
+					},
+					"name": "meta.structure.dictionary.value.jsonx",
+					"patterns": [
+						{
+							"comment": "the jsonx object value",
+							"include": "#value"
+						},
+						{
+							"match": "[^\\s,]",
+							"name": "invalid.illegal.expected-dictionary-separator.jsonx"
+						}
+					]
+				},
+				{
+					"match": "[^\\s\\}]",
+					"name": "invalid.illegal.expected-dictionary-separator.jsonx"
+				}
+			]
+		},
+		"stringKey": {
+			"begin": "[\"]",
+			"beginCaptures": {
+				"0": { "name": "punctuation.definition.string.begin.jsonx" }
+			},
+			"end": "[\"]",
+			"endCaptures": {
+				"0": { "name": "punctuation.definition.string.end.jsonx" }
+			},
+			"name": "variable.parameter.jsonx",
+			"patterns": [
+				{
+					"match": "(?x:                # turn on extended mode\n                     \\\\                # a literal backslash\n                     (?:               # ...followed by...\n                       [\"\\\\/bfnrt]     # one of these characters\n                       |               # ...or...\n                       u               # a u\n                       [0-9a-fA-F]{4}  # and four hex digits\n                     )\n                   )",
+					"name": "constant.character.escape.jsonx"
+				},
+				{
+					"match": "\\\\.",
+					"name": "invalid.illegal.unrecognized-string-escape.jsonx"
+				}
+			]
+		},
+		"stringValue": {
+			"begin": "[\"]",
+			"beginCaptures": {
+				"0": { "name": "punctuation.definition.string.begin.jsonx" }
+			},
+			"end": "[\"]",
+			"endCaptures": {
+				"0": { "name": "punctuation.definition.string.end.jsonx" }
+			},
+			"name": "string.quoted.jsonx",
+			"patterns": [
+				{
+					"match": "(?x:                # turn on extended mode\n                     \\\\                # a literal backslash\n                     (?:               # ...followed by...\n                       [\"\\\\/bfnrt]     # one of these characters\n                       |               # ...or...\n                       u               # a u\n                       [0-9a-fA-F]{4}  # and four hex digits\n                     )\n                   )",
+					"name": "constant.character.escape.jsonx"
+				},
+				{
+					"match": "\\\\.",
+					"name": "invalid.illegal.unrecognized-string-escape.jsonx"
+				}
+			]
+		},
+
+		
+		"key": {
+			"name": "string.key.jsonx",
+			"patterns": [
+				{ "include": "#stringDouble" },
+				{ "include": "#variable" },
+				{ "include": "#assigned" },
+				{ "include": "#export" },
+				{ "include": "#stringKey" }
+			]
+		},
+		"value": {
+			"comment": "the 'value' diagram at http://json.org",
+			"patterns": [
+				{ "include": "#constant" },
+				{ "include": "#assigned" },
+				{ "include": "#import" },
+				{ "include": "#export" },
+				{ "include": "#infinity" },
+				{ "include": "#number" },
+				{ "include": "#stringValue" },
+				{ "include": "#array" },
+				{ "include": "#object" },
+				{ "include": "#script" }
+			]
+		},
+		"comments": {
+			"patterns": [
+				{
+					"match": "/{2}.*",
+					"name": "comment.single.jsonx"
+				},
+				{
+					"begin": "/\\*\\*(?!/)",
+					"captures": {
+						"0": { "name": "punctuation.definition.comment.jsonx" }
+					},
+					"end": "\\*/",
+					"name": "comment.block.documentation.jsonx"
+				},
+				{
+					"begin": "/\\*",
+					"captures": {
+						"0": { "name": "punctuation.definition.comment.jsonx" }
+					},
+					"end": "\\*/",
+					"name": "comment.block.jsonx"
+				}
+			]
+		}
+	}
+}

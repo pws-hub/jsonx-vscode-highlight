@@ -1,0 +1,37 @@
+{
+    "name": "jsonx",
+    "displayName": "JSONX syntax",
+    "description": "Highlight JSONX code syntax in VS-Code",
+    "publisher": "pws-hub",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.60.0"
+    },
+    "icon": "icon.png",
+    "homepage": "https://github.com/pws-hub/jsonx-vscode/blob/master/README.md",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/pws-hub/jsonx-vscode"
+    },
+    "keywords": [
+      "jsonx",
+      "syntax",
+      "highlight"
+    ],
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "jsonx",
+            "aliases": ["JSONX", "jsonx"],
+            "extensions": ["jsonx"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "jsonx",
+            "scopeName": "source.jsonx",
+            "path": "./syntaxes/jsonx.tmLanguage.json"
+        }]
+    }
+}

@@ -1,0 +1,50 @@
+// This file is written in JSONX syntax, naturally, but npm needs a regular
+// JSON file, so compile via `npm run build`. Be sure to keep both in sync!
+
+{
+	// Import data from external server by destructuring to object
+	$user: @import { name, email, phone, settings.theme, account } from https://localhost:3000/user,
+	// Import and destructure data to array from a relative directory
+	$superRoles: @import [ natrole, prerole ] from ./../services-roles.jsonx,
+	// Import without destructuring
+	$location: @import https://ipinfo.com/location?access_token=Ido38hibD97932ij&json=true,
+
+	/* Multiple line comment */ 
+	$profile: {
+		"name": $user.name,
+		"contacts": $user{email,phone},
+		"isVerified": true,
+		"bio": "Phd in Biology animal and Physiology",
+		"location-infos": $location
+	},
+
+	"me": {
+		...$profile,
+		"accountType": $user.account.type,
+		"theme": $user.theme
+	},
+	"service": {
+		"activeRole": $superRoles[0], // Assign array item
+		"roles": [ ...$superRoles, "USER" ], // Assign value of $superRoles along with USER
+		"rate": 2.5,
+		"added": $user.account.added[ at, by ], // Assign data by destructuring to array
+	},
+
+	// Define alias of a destructed data field
+	$credentials: @import { cId, access.key as token } from https://example.com/credentials/9IDow82bu,
+
+	// Export data
+	@export as $access: {
+		"id": $credentials.cId,
+		"token": $credentials.token
+	},
+
+	$connection: "online",
+	// Can do multiple exports within
+	@export as $profile: `$connection !== "online" ? $profile : $user.account || "Unknown"`,
+
+	/*
+		NOTE: The whole object is return as default export
+		when imported to another JSONX file.
+	*/
+}
